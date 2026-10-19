@@ -1,0 +1,19 @@
+{
+  "name": "ListenShelf",
+  "short_name": "ListenShelf",
+  "description": "Personal audio collection player",
+  "id": "/ListenShelf/",
+  "start_url": "/ListenShelf/",
+  "scope": "/ListenShelf/",
+  "display": "standalone",
+  "background_color": "#16171d",
+  "theme_color": "#16171d",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,32 +1,34 @@
-# React + TypeScript + Vite
+# ListenShelf
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+ListenShelf is a mobile-friendly React / TypeScript audio-player proof of concept.
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Install Node.js 24 or later. Then run:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```sh
+npm ci
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Open the local address printed by Vite. Build the production site with `npm run build`.
+
+## GitHub Pages
+
+The project is configured for the repository `exitramp505/ListenShelf`, with the Vite base path `/ListenShelf/`.
+
+A workflow at `.github/workflows/deploy.yml` builds and deploys changes to the `main` branch. In GitHub **Settings → Pages**, choose **GitHub Actions** under **Build and deployment → Source**.
+
+Expected Pages address: https://exitramp505.github.io/ListenShelf/
+
+## iPhone
+
+Open the Pages site in Safari, tap Share, and select **Add to Home Screen**. The app includes standalone display metadata. A full offline-capable service worker has not been added; recordings require network access.
+
+## Playback
+
+Use Play to start. Next/Previous preserves playback intent, and the player attempts to advance automatically at the end of each recording. Safari may still impose limits on automatic playback and lock-screen behavior, which must be tested on an actual iPhone.
+
+## Repository hygiene
+
+`node_modules/` and `dist/` belong in `.gitignore` and should not be uploaded again. If already committed, they can be removed from Git tracking as a separate housekeeping change.
