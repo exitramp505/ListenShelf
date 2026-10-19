@@ -33,6 +33,8 @@ function App() {
   
   const audioRef = useRef<HTMLAudioElement>(null)
   const playlistRef = useRef(MOCK_PLAYLIST)
+  // Track whether the user wants playback to continue across tracks.
+  const playbackIntentRef = useRef(false)
 
   // Set up media session when supported
   useEffect(() => {
@@ -79,18 +81,23 @@ function App() {
   }, [currentTrackIndex])
 
   const play = () => {
-    if (audioRef.current) {
-      audioRef.current.play()
-      setIsPlaying(true)
-      setError(null)
-    }
+    const audio = audioRef.current
+    if (!audio) return
+    playbackIntentRef.current = true
+    setError(null)
+    void audio.play().catch((cause: unknown) => {
+      // Switching tracks may cancel a pending play request; this is harmless.
+      if (cause instanceof Error && cause.name === 'AbortError') return
+      playbackIntentRef.current = false
+      setIsPlaying(false)
+      setError('Playback could not start. Tap Play to try again.')
+      console.error('Audio play request failed:', cause)
+    })
   }
 
   const pause = () => {
-    if (audioRef.current) {
-      audioRef.current.pause()
-      setIsPlaying(false)
-    }
+    playbackIntentRef.current = false
+    audioRef.current?.pause()
   }
 
   const nextTrack = () => {
@@ -120,9 +127,11 @@ function App() {
   }
 
   const handleError = (e: React.SyntheticEvent<HTMLAudioElement, Event>) => {
-    setError('Playback error occurred. Please try again.')
+    playbackIntentRef.current = false
+    setError('The recording could not be loaded. Try Play again or skip to the next one.')
     console.error('Audio playback error:', e)
     setIsPlaying(false)
+    setIsLoading(false)
   }
 
   const handleTimeUpdate = () => {
@@ -133,26 +142,42 @@ function App() {
   }
 
   const handleEnded = () => {
-    // Auto-advance to next track when current one ends
     if (currentTrackIndex < playlistRef.current.length - 1) {
+      // Preserve the user's intent so the source-change effect starts the next track.
+      playbackIntentRef.current = true
       setCurrentTrackIndex(currentTrackIndex + 1)
       setIsLoading(true)
       setError(null)
     } else {
+      playbackIntentRef.current = false
       setIsPlaying(false)
     }
   }
 
   const formatTime = (time: number) => {
+    if (!Number.isFinite(time) || time < 0) return '0:00'
     const minutes = Math.floor(time / 60)
     const seconds = Math.floor(time % 60)
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
   }
 
-  // Load new track when index changes
+  // Switching a source does not automatically restart playback in browsers.
+  // Reuse the SAME audio element and explicitly continue only when requested.
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.load()
+    const audio = audioRef.current
+    if (!audio) return
+    setCurrentTime(0)
+    setDuration(0)
+    audio.load()
+    if (playbackIntentRef.current) {
+      void audio.play().catch((cause: unknown) => {
+        if (cause instanceof Error && cause.name === 'AbortError') return
+        playbackIntentRef.current = false
+        setIsPlaying(false)
+        setIsLoading(false)
+        setError('Automatic playback was blocked. Tap Play to continue.')
+        console.error('Unable to advance playback:', cause)
+      })
     }
   }, [currentTrackIndex])
 
@@ -207,6 +232,9 @@ function App() {
           onCanPlay={handleCanPlay}
           onError={handleError}
           onTimeUpdate={handleTimeUpdate}
+          onPlaying={() => { setIsPlaying(true); setIsLoading(false) }}
+          onPause={() => setIsPlaying(false)}
+          onWaiting={() => setIsLoading(true)}
           onEnded={handleEnded}
         />
       </div>
