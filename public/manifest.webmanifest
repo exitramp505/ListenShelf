@@ -1,18 +1,30 @@
 {
   "name": "ListenShelf",
   "short_name": "ListenShelf",
-  "description": "Personal audio collection player",
+  "description": "Your personal collection of audiobooks and audio recordings",
   "id": "/ListenShelf/",
   "start_url": "/ListenShelf/",
   "scope": "/ListenShelf/",
   "display": "standalone",
-  "background_color": "#16171d",
-  "theme_color": "#16171d",
+  "background_color": "#0c111d",
+  "theme_color": "#0c111d",
   "icons": [
     {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "favicon.svg",
-      "type": "image/svg+xml",
       "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any"
     }
   ]

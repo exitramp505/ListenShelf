@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { ChangeEvent, FormEvent } from 'react'
+import type { CSSProperties, ChangeEvent, FormEvent } from 'react'
 import { COLLECTION_COLORS, STARTER_COLLECTIONS, validateCollection } from './library'
 import type { AudioCollection } from './library'
 import { Cover, Icon, formatCount, formatTime } from './ui'
@@ -241,6 +241,7 @@ function App() {
     setNowPlaying({ collectionId: book.id, trackIndex: index })
     setCurrentTime(0)
     setDuration(0)
+    lastSaveRef.current = 0
     setError(null)
     setIsLoading(true)
     const saved = progressRef.current[book.id]
@@ -870,7 +871,7 @@ function App() {
             <div className="player-dialog__top"><button className="icon-btn" onClick={() => setPlayerOpen(false)} aria-label="Minimize player"><Icon name="chevronDown" size={25}/></button><span>NOW PLAYING</span><button className="icon-btn" onClick={() => {setPlayerOpen(false);openBook(activeBook)}} aria-label="Show collection"><Icon name="list" size={22}/></button></div>
             <div className="player-dialog__art"><Cover collection={activeBook} size="player"/></div>
             <div className="player-dialog__identity"><div><h2>{activeTrack.title}</h2><p>{activeBook.title} · {activeBook.author}</p></div><button className={`icon-btn heart-btn ${favorites.includes(activeBook.id) ? 'is-favorite' : ''}`} onClick={() => toggleFavorite(activeBook.id)} aria-label="Toggle favorite"><Icon name="heart" size={23}/></button></div>
-            <div className="player-dialog__progress"><input aria-label="Audio position" type="range" min="0" max={duration || 1} step="1" value={Math.min(currentTime, duration || 1)} onChange={(event) => seekTo(Number(event.target.value))} style={{ '--progress': `${duration ? (currentTime / duration * 100) : 0}%` } as React.CSSProperties}/><div><span>{formatTime(currentTime)}</span><span>{duration > 0 ? '-' + formatTime(Math.max(0, duration - currentTime)) : isLoading ? 'Loading…' : '0:00'}</span></div></div>
+            <div className="player-dialog__progress"><input aria-label="Audio position" type="range" min="0" max={duration || 1} step="1" value={Math.min(currentTime, duration || 1)} onChange={(event) => seekTo(Number(event.target.value))} style={{ '--progress': `${duration ? (currentTime / duration * 100) : 0}%` } as CSSProperties}/><div><span>{formatTime(currentTime)}</span><span>{duration > 0 ? '-' + formatTime(Math.max(0, duration - currentTime)) : isLoading ? 'Loading…' : '0:00'}</span></div></div>
             <div className="player-dialog__controls">
               <button onClick={previous} aria-label="Previous recording" title="Previous recording"><Icon name="previous" size={26}/></button>
               <button onClick={() => seekBy(-15)} aria-label="Skip back 15 seconds"><Icon name="back15" size={32}/></button>
