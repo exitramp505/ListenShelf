@@ -605,7 +605,9 @@ function App() {
           <button className="book-card__title" onClick={() => openBook(book)}>{book.title}</button>
           <span className="book-card__author">{book.author}</span>
           <div className="book-card__bottom">
-            <span>{formatCount(book.tracks.length, 'recording')}</span>
+            {book.tracks.length === 0 && book.sourceUrl
+              ? <a className="text-link" href={book.sourceUrl} target="_blank" rel="noopener noreferrer">Open source <Icon name="link" size={13}/></a>
+              : <span>{formatCount(book.tracks.length, 'recording')}</span>}
             <button className={`icon-btn heart-btn ${favorites.includes(book.id) ? 'is-favorite' : ''}`}
               onClick={() => toggleFavorite(book.id)}
               aria-label={favorites.includes(book.id) ? `Remove ${book.title} from favorites` : `Favorite ${book.title}`}
@@ -688,14 +690,18 @@ function App() {
                   <p className="detail-hero__author">by {selected.author}</p>
                   <p className="detail-hero__description">{selected.description || 'A collection of audio recordings.'}</p>
                   <div className="detail-hero__stats">
-                    <span><Icon name="list" size={17}/> {formatCount(selected.tracks.length, 'recording')}</span>
+                    <span><Icon name={selected.tracks.length ? 'list' : 'link'} size={17}/> {selected.tracks.length ? formatCount(selected.tracks.length, 'recording') : 'External source only'}</span>
                     <span><Icon name="headphones" size={17}/> {selected.category}</span>
                     {progressMap[selected.id] && <span><Icon name="clock" size={17}/> In progress</span>}
                   </div>
                   <div className="detail-actions">
-                    <button className="button button--primary" onClick={() => startBook(selected)}>
-                      <Icon name="play" size={17}/> {progressMap[selected.id] ? 'Continue listening' : 'Start listening'}
-                    </button>
+                    {selected.tracks.length > 0 ? (
+                      <button className="button button--primary" onClick={() => startBook(selected)}>
+                        <Icon name="play" size={17}/> {progressMap[selected.id] ? 'Continue listening' : 'Start listening'}
+                      </button>
+                    ) : selected.sourceUrl ? (
+                      <a className="button button--primary" href={selected.sourceUrl} target="_blank" rel="noopener noreferrer"><Icon name="link" size={17}/> Open recording page</a>
+                    ) : null}
                     <button className={`button button--outline ${favorites.includes(selected.id) ? 'button--favorited' : ''}`}
                       onClick={() => toggleFavorite(selected.id)}>
                       <Icon name="heart" size={18}/> {favorites.includes(selected.id) ? 'Favorited' : 'Add to favorites'}
@@ -707,6 +713,8 @@ function App() {
                 </div>
               </div>
               <div className="track-section">
+                {selected.tracks.length > 0 ? (
+                  <>
                 <div className="section-heading section-heading--tracks">
                   <div><span className="eyebrow eyebrow--muted">THE RECORDINGS</span><h2>Track list</h2></div>
                   <span className="small-pill">{formatCount(selected.tracks.length, 'chapter', 'chapters')}</span>
@@ -730,7 +738,11 @@ function App() {
                     )
                   })}
                 </div>
-                {selected.sourceUrl && <p className="attribution">Public-domain recording information: <a href={selected.sourceUrl} target="_blank" rel="noopener noreferrer">View source <Icon name="link" size={13}/></a></p>}
+                  </>
+                ) : (
+                  <p className="attribution">This title links to an external audio page. The recordings are not available in the ListenShelf player.</p>
+                )}
+                {selected.sourceUrl && <p className="attribution">Recording source: <a href={selected.sourceUrl} target="_blank" rel="noopener noreferrer">View source <Icon name="link" size={13}/></a></p>}
                 {selected.custom && <div className="detail-manage"><button onClick={() => openEditManager(selected)}><Icon name="edit" size={16}/> Edit collection</button><button className="danger-text" onClick={() => removeCollection(selected)}><Icon name="trash" size={16}/> Remove</button></div>}
               </div>
             </div>

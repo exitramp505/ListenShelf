@@ -134,6 +134,18 @@ export const STARTER_COLLECTIONS: AudioCollection[] = [
       (number) => archive('persuasion_0905_librivox_64kb_mp3', `persuasion_${two(number)}_austen_64kb.mp3`),
     ),
   },
+  // External-source bookmark; no audio files are imported or streamed by ListenShelf.
+  {
+    id: 'raspail-camp-saints-source',
+    title: 'The Camp of the Saints',
+    author: 'Jean Raspail',
+    category: 'Fiction',
+    label: 'EXTERNAL SOURCE',
+    description: 'A controversial 1973 dystopian novel about mass migration to France. This listing links to an external audio page; recordings are not available in the ListenShelf player.',
+    color: 'slate',
+    sourceUrl: 'https://www.alexlinder.com/audio/raspail-camp_of_the_saints.html',
+    tracks: [],
+  },
   // The original three URLs are preserved verbatim from the earlier ListenShelf prototype.
   // No automatic ingestion from the reference site is performed.
   {
